@@ -1,6 +1,8 @@
 package smallSpring.beans.wrapper;
 
-public class BeanWrapperImpl implements  BeanWrapper {
+import smallSpring.beans.converter.TypeConverter;
+
+public class BeanWrapperImpl implements  BeanWrapper  , TypeConverter {
     Object wrapperObject;
 
     @Override

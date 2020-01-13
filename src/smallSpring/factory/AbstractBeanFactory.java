@@ -22,6 +22,7 @@ public class AbstractBeanFactory  extends DefaultSingletonBeanRegistry implement
     protected Object getObjectForBeanInstance(Object sharedInstance, String name, String name1, RootBeanDefinition mbd) {
         if()
             // TODO
+            
 
 
     }
