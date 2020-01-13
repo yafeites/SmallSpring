@@ -2,6 +2,7 @@ package smallSpring.beandefiniton;
 
 import smallSpring.beans.propertyvalue.MutablePropertyValues;
 import smallSpring.beans.propertyvalue.PropertyValues;
+import smallSpring.factory.AutowireCapableBeanFactory;
 import smallSpring.resource.Resource;
 
 import java.awt.font.ShapeGraphicAttribute;
@@ -11,10 +12,22 @@ public class AbstractBeanDefiniton implements   BeanDefinition {
     private static final String SCOPE_SINGLETON ="singleton" ;
     private static final String SCOPE_DEFAULT = "";
     private static final String SCOPE_PROTOTYPE = "prototype";
+    private int autowireMode = AUTOWIRE_NO;
 
+    public static final int AUTOWIRE_BY_TYPE = AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE;
+    public static final int AUTOWIRE_BY_NAME = AutowireCapableBeanFactory.AUTOWIRE_BY_NAME;
+    public static final int AUTOWIRE_NO = AutowireCapableBeanFactory.AUTOWIRE_NO;
     private MutablePropertyValues mutablePropertyValues;
     private Resource resource;
     private String scope=SCOPE_DEFAULT;
+
+    public String getScope() {
+        return scope;
+    }
+
+    public void setScope(String scope) {
+        this.scope = scope;
+    }
 
     public PropertyValues getPropertyValues() {
         return mutablePropertyValues;
@@ -62,5 +75,9 @@ public class AbstractBeanDefiniton implements   BeanDefinition {
         {
             return SCOPE_PROTOTYPE.equals(scope);
         }
+    }
+
+    public int getResolvedAutowireMode() {
+        return this.autowireMode;
     }
 }
