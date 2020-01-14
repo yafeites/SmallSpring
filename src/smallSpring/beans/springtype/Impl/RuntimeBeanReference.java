@@ -1,6 +1,6 @@
-package smallSpring.beans.classUtils.Impl;
+package smallSpring.beans.springtype.Impl;
 
-import smallSpring.beans.classUtils.BeanReference;
+import smallSpring.beans.springtype.BeanReference;
 
 public class RuntimeBeanReference implements BeanReference {
     private final String beanName;

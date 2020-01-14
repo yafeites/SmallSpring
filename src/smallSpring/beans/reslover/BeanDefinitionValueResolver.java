@@ -1,8 +1,8 @@
 package smallSpring.beans.reslover;
 
 import smallSpring.beandefiniton.BeanDefinition;
-import smallSpring.beans.classUtils.Impl.RuntimeBeanReference;
-import smallSpring.beans.classUtils.Impl.TypedStringValue;
+import smallSpring.beans.springtype.Impl.RuntimeBeanReference;
+import smallSpring.beans.springtype.Impl.TypedStringValue;
 import smallSpring.beans.converter.TypeConverter;
 import smallSpring.factory.AbstractBeanFactory;
 
@@ -24,6 +24,7 @@ public class BeanDefinitionValueResolver {
         this.typeConverter=typeConverter;
 
     }
+    //解析value的实际类型
     public Object resolveValueIfNecessary(Object argName, Object value) {
         if (value instanceof RuntimeBeanReference) {
             RuntimeBeanReference ref = (RuntimeBeanReference) value;
@@ -40,9 +41,15 @@ public class BeanDefinitionValueResolver {
                 else {
                     return valueObject;
                 }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
-        else  return  null;
+          return  null;
+    }
+
+    private Class<?> resolveTargetType(TypedStringValue typedStringValue) {
+        return  typedStringValue.resloveTargetType(this.beanFactory.getBeanClassLoader());
     }
 
     private Object resolveReference(Object argName, RuntimeBeanReference ref) {

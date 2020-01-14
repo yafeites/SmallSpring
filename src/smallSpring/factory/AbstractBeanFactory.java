@@ -4,6 +4,7 @@ import smallSpring.beandefiniton.RootBeanDefinition;
 import smallSpring.registry.DefaultSingletonBeanRegistry;
 
 public class AbstractBeanFactory  extends DefaultSingletonBeanRegistry implements  BeanFactory{
+    private ClassLoader beanClassLoader=Thread.currentThread().getContextClassLoader();
     @Override
     public Object getBean(String name) throws Exception {
         return doGetBean(name);
@@ -25,5 +26,9 @@ public class AbstractBeanFactory  extends DefaultSingletonBeanRegistry implement
             
 
 
+    }
+
+    public ClassLoader getBeanClassLoader() {
+        return  beanClassLoader;
     }
 }

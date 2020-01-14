@@ -3,6 +3,7 @@ package smallSpring.factory;
 import smallSpring.beandefiniton.BeanDefinition;
 import smallSpring.beandefiniton.RootBeanDefinition;
 import smallSpring.beans.propertyvalue.MutablePropertyValues;
+import smallSpring.beans.propertyvalue.PropertyValue;
 import smallSpring.beans.propertyvalue.PropertyValues;
 import smallSpring.beans.reslover.BeanDefinitionValueResolver;
 import smallSpring.beans.wrapper.BeanWrapper;
@@ -14,6 +15,8 @@ import smallSpring.strategy.SimpleInstantiationStrategy;
 import java.beans.Beans;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract  class AbstractAutowireCapableBeanFactory extends  AbstractBeanFactory implements  AutowireCapableBeanFactory{
     private InstantiationStrategy instantiationStrategy =new SimpleInstantiationStrategy();
@@ -47,7 +50,23 @@ public abstract  class AbstractAutowireCapableBeanFactory extends  AbstractBeanF
 
     protected  void applyPropertyValues(String beanName, BeanDefinition mbd, BeanWrapper bw, PropertyValues pvs)
     {
-        BeanDefinitionValueResolver valueResolver = new BeanDefinitionValueResolver(this, beanName, mbd, converter);
+        List<PropertyValue> deepCopy = new ArrayList<PropertyValue>(pvs.getPropertyValues().length);
+        BeanDefinitionValueResolver valueResolver = new BeanDefinitionValueResolver(this, beanName, mbd, (BeanWrapperImpl)bw);
+        for (PropertyValue pv : pvs.getPropertyValues()) {
+            if (pv.isConverted()) {
+                deepCopy.add(pv);
+            }
+            else
+            {
+                String propertyName = pv.getName();
+                Object originalValue = pv.getValue();
+                Object resolvedValue = valueResolver.resolveValueIfNecessary(pv, originalValue);
+                Object convertedValue = resolvedValue;
+                    pv.setConvertedValue(convertedValue);
+                deepCopy.add(pv);
+            }
+        }
+        bw.setPropertyValues(new MutablePropertyValues(deepCopy));
     }
     protected  BeanWrapper createBeanInstance(String beanName, RootBeanDefinition mbd, Object[] args)
     {
