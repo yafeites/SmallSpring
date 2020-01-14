@@ -7,7 +7,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class DefaultSingletonBeanRegistry implements SingletonBeanFactory {
-    private final Set<String> registeredSingletons = new LinkedHashSet<String>(256);
+//    private final Set<String> registeredSingletons = new LinkedHashSet<String>(256);
 
     private static final Object NULL_OBJECT = new Object();
 
@@ -25,6 +25,13 @@ public class DefaultSingletonBeanRegistry implements SingletonBeanFactory {
 
     }
 
+    protected void addSingletonFactory(String beanName, ObjectFactory<Object> singletonFactory) {
+        if (!this.singletonObjects.containsKey(beanName))
+        {
+            this.singletonFactories.put(beanName, singletonFactory);
+            this.earlySingletonObjects.remove(beanName);
+        }
+    }
     @Override
     public Object getSingleton(String beanName) {
         return getSingleton(beanName, true);
@@ -53,7 +60,7 @@ public class DefaultSingletonBeanRegistry implements SingletonBeanFactory {
         }
         return (singletonObject != NULL_OBJECT ? singletonObject : null);
     }
-    private  Object getSingleton(String beanName,ObjectFactory<?> singletonFactory)
+   public     Object getSingleton(String beanName,ObjectFactory<?> singletonFactory)
     {
         synchronized (this.singletonObjects) {
             Object singletonObject=this.singletonObjects.get(beanName);;
@@ -66,12 +73,12 @@ public class DefaultSingletonBeanRegistry implements SingletonBeanFactory {
         }
     }
 
-    private void addSingleton(String beanName, Object singletonObject) {
+    private   void addSingleton(String beanName, Object singletonObject) {
         synchronized (this.singletonObjects) {
             this.singletonObjects.put(beanName, (singletonObject != null ? singletonObject : NULL_OBJECT));
             this.singletonFactories.remove(beanName);
             this.earlySingletonObjects.remove(beanName);
-            this.registeredSingletons.add(beanName);
+//            this.registeredSingletons.add(beanName);
         }
 
     }

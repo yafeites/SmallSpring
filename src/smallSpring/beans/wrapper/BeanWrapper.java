@@ -1,8 +1,9 @@
 package smallSpring.beans.wrapper;
 
-import smallSpring.beans.propertydescriptor.PropertyDescriptor;
+
 import smallSpring.beans.propertyvalue.MutablePropertyValues;
 
+import java.beans.PropertyDescriptor;
 
 
 public interface BeanWrapper {
@@ -10,6 +11,7 @@ public interface BeanWrapper {
 
     Class<?> getWrappedClass();
 
-    void setPropertyValues(MutablePropertyValues mutablePropertyValues);
+    void setPropertyValuetoBean(MutablePropertyValues mutablePropertyValues);
+    PropertyDescriptor getPropertyDescriptor(String name);
     PropertyDescriptor[] getPropertyDescriptors();
 }

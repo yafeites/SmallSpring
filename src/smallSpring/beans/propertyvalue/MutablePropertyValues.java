@@ -43,4 +43,13 @@ public class MutablePropertyValues implements PropertyValues {
         }
         return null;
     }
+
+    @Override
+    public boolean contains(String name) {
+        return false;
+    }
+
+    public void add(String propertyName, Object bean) {
+        propertyValueList.add(new PropertyValue(propertyName,bean));
+    }
 }

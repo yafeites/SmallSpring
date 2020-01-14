@@ -2,6 +2,7 @@ package smallSpring.factory;
 
 import smallSpring.beandefiniton.BeanDefinition;
 import smallSpring.beandefiniton.RootBeanDefinition;
+import smallSpring.beanpostprocessor.BeanPostProcessor;
 import smallSpring.beans.propertyvalue.MutablePropertyValues;
 import smallSpring.beans.propertyvalue.PropertyValue;
 import smallSpring.beans.propertyvalue.PropertyValues;
@@ -9,14 +10,19 @@ import smallSpring.beans.reslover.BeanDefinitionValueResolver;
 import smallSpring.beans.wrapper.BeanWrapper;
 import smallSpring.beans.wrapper.BeanWrapperImpl;
 import smallSpring.exception.BeanCreationException;
+import smallSpring.exception.BeansException;
 import smallSpring.strategy.InstantiationStrategy;
 import smallSpring.strategy.SimpleInstantiationStrategy;
 
 import java.beans.Beans;
+import java.beans.PropertyDescriptor;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import java.sql.Wrapper;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 public abstract  class AbstractAutowireCapableBeanFactory extends  AbstractBeanFactory implements  AutowireCapableBeanFactory{
     private InstantiationStrategy instantiationStrategy =new SimpleInstantiationStrategy();
@@ -41,11 +47,77 @@ public abstract  class AbstractAutowireCapableBeanFactory extends  AbstractBeanF
         applyPropertyValues(beanName,mbd,bw,pvs);
     }
 
-    private void autowireByName(String beanName, RootBeanDefinition mbd, BeanWrapper bw, MutablePropertyValues newPvs) {
+     void autowireByName(String beanName, RootBeanDefinition mbd, BeanWrapper bw, MutablePropertyValues newPvs) {
+        String[] propertyNames = unsatisfiedNonSimpleProperties(mbd, bw);
+        for (String propertyName : propertyNames) {
+            if (containsBean(propertyName)&&beanName!=propertyName) {
+                newPvs.add(propertyName, getBean(propertyName));
 
-    }
+            }
+            }
+        }
+
+
 
     private void autowireByType(String beanName, RootBeanDefinition mbd, BeanWrapper bw, MutablePropertyValues newPvs) {
+        String[] propertyNames = unsatisfiedNonSimpleProperties(mbd, bw);
+        for (String propertyName : propertyNames) {
+            PropertyDescriptor pd=bw.getPropertyDescriptor(propertyName);
+            Set<String>TypeSet=getBeanDefintionByType(pd.getPropertyType());
+            for(String name:TypeSet)
+            {
+                if(name!=beanName) {
+                    newPvs.add(propertyName, getBean(name));
+                    break;
+                }
+            }
+
+        }
+    }
+    protected  Object createBean(String beanName, RootBeanDefinition mbd)
+    {
+        Object beanInstance = doCreateBean(beanName, mbd );
+        return  beanInstance;
+    }
+    protected  Object doCreateBean(String beanName,RootBeanDefinition mbd)
+    {
+
+        BeanWrapper instanceWrapper = null;
+//        创建包装bean的类
+        instanceWrapper = createBeanInstance(beanName, mbd);
+        final Object bean = (instanceWrapper != null ? instanceWrapper.getWrappedInstance() : null);
+//        增添
+        if(mbd.isSingleton())
+        {
+            addSingletonFactory(beanName, new ObjectFactory<Object>() {
+                @Override
+                public Object getObject() throws BeansException {
+                    return bean;
+                }
+            });
+        }
+
+        //给bean添加参数
+    populateBean(beanName, mbd, instanceWrapper);
+
+//    bean最后初始化
+        Object finalObject=initializeBean(bean,beanName);
+
+         return finalObject;
+    }
+
+    private String[] unsatisfiedNonSimpleProperties(RootBeanDefinition mbd, BeanWrapper bw) {
+        Set<String> result = new TreeSet<String>();
+        PropertyValues pvs = mbd.getPropertyValues();
+        PropertyDescriptor[] pds = bw.getPropertyDescriptors();
+        for (PropertyDescriptor pd : pds) {
+            if (pd.getWriteMethod() != null && !pvs.contains(pd.getName()) &&
+                    (!pd.getPropertyType().isPrimitive())||(pd.getPropertyType().isArray()&&
+                    pd.getPropertyType().getComponentType().isPrimitive()) ) {
+                result.add(pd.getName());
+            }
+        }
+        return result.toArray(new String[result.size()]);
     }
 
     protected  void applyPropertyValues(String beanName, BeanDefinition mbd, BeanWrapper bw, PropertyValues pvs)
@@ -66,9 +138,9 @@ public abstract  class AbstractAutowireCapableBeanFactory extends  AbstractBeanF
                 deepCopy.add(pv);
             }
         }
-        bw.setPropertyValues(new MutablePropertyValues(deepCopy));
+        bw.setPropertyValuetoBean(new MutablePropertyValues(deepCopy));
     }
-    protected  BeanWrapper createBeanInstance(String beanName, RootBeanDefinition mbd, Object[] args)
+    protected  BeanWrapper createBeanInstance(String beanName, RootBeanDefinition mbd)
     {
         return instantiateBean(beanName, mbd);
     }
@@ -90,6 +162,18 @@ public abstract  class AbstractAutowireCapableBeanFactory extends  AbstractBeanF
     private InstantiationStrategy getInstantiationStrategy() {
         return this.instantiationStrategy;
     }
+
+    @Override
+    public Object initializeBean(Object bean, String beanName) throws BeansException {
+        Object result=bean;
+        for (BeanPostProcessor beanProcessor : getBeanPostProcessors()) {
+            result= beanProcessor.postProcessBeforeInitialization(bean, beanName);
+        }
+        return  result;
+    }
+
+
+
 
     //   初始化BeanWrapper
     protected  void initBeanWrapper(BeanWrapper bw)
