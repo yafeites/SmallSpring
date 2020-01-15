@@ -6,44 +6,38 @@ import smallSpring.documentloader.DefaultDocumentLoader;
 import smallSpring.documentloader.DocumentLoader;
 import smallSpring.registry.BeanDefinitionRegistry;
 import smallSpring.resource.Resource;
+import smallSpring.resourceloader.ResourceLoader;
 
 import java.io.IOException;
 import java.io.InputStream;
 
 public  abstract  class AbstractBeanDefinitionReader implements  BeanDefinitionReader {
     private final BeanDefinitionRegistry registry;
+    private ResourceLoader resourceLoader;
     private DocumentLoader documentLoader = new DefaultDocumentLoader();
     AbstractBeanDefinitionReader(BeanDefinitionRegistry registry) {
         this.registry=registry;
+        if (this.registry instanceof ResourceLoader) {
+            this.resourceLoader = (ResourceLoader) this.registry;
+        }
+    }
+
+    @Override
+    public ResourceLoader getResourceLoader() {
+        return this.resourceLoader;
     }
     @Override
-    public int loadBeanDefinitions(Resource resource){
-        InputStream inputStream = null;
-        try {
-            inputStream = resource.getInputStream();
-            try {
-                InputSource inputSource = new InputSource(inputStream);
-                return doLoadBeanDefinitions(inputSource, resource);
-            }
-            finally {
-                inputStream.close();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-      return  0;
+    public final BeanDefinitionRegistry getRegistry() {
+        return this.registry;
+    }
+    @Override
+    public int loadBeanDefinitions(String location) {
+      Resource resource=getResourceLoader().getResource(location);
+      int count=loadBeanDefinitions(resource);
+      return count;
     }
 
-    protected  int doLoadBeanDefinitions(InputSource inputSource, Resource resource)
-    {
-        Document doc = doLoadDocument(inputSource, resource);
-        return registerBeanDefinitions(doc, resource);
-    }
 
-    private int registerBeanDefinitions(Document doc, Resource resource) {
-    }
 
-    private Document doLoadDocument(InputSource inputSource, Resource resource) {
-    }
+
 }

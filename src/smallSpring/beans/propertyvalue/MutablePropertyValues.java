@@ -49,7 +49,7 @@ public class MutablePropertyValues implements PropertyValues {
         return false;
     }
 
-    public void add(String propertyName, Object bean) {
-        propertyValueList.add(new PropertyValue(propertyName,bean));
+    public void add(String propertyName, Object value) {
+        propertyValueList.add(new PropertyValue(propertyName,value));
     }
 }

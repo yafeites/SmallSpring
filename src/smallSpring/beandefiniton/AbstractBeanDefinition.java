@@ -8,7 +8,7 @@ import smallSpring.resource.Resource;
 import java.awt.font.ShapeGraphicAttribute;
 import java.awt.font.TextLayout;
 
-public class AbstractBeanDefiniton implements   BeanDefinition {
+public class AbstractBeanDefinition implements   BeanDefinition {
     private static final String SCOPE_SINGLETON ="singleton" ;
     private static final String SCOPE_DEFAULT = "";
     private static final String SCOPE_PROTOTYPE = "prototype";
@@ -29,7 +29,7 @@ public class AbstractBeanDefiniton implements   BeanDefinition {
         this.scope = scope;
     }
 
-    public PropertyValues getPropertyValues() {
+    public MutablePropertyValues getPropertyValues() {
         return mutablePropertyValues;
     }
 
@@ -64,6 +64,10 @@ public class AbstractBeanDefiniton implements   BeanDefinition {
         }
     }
 
+
+    public void setAutowireMode(int autowireMode) {
+        this.autowireMode = autowireMode;
+    }
     @Override
     public boolean isSingleton() {
 

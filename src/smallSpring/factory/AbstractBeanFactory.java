@@ -1,5 +1,7 @@
 package smallSpring.factory;
 
+import smallSpring.beandefiniton.AbstractBeanDefinition;
+import smallSpring.beandefiniton.BeanDefinition;
 import smallSpring.beandefiniton.RootBeanDefinition;
 import smallSpring.beanpostprocessor.BeanPostProcessor;
 import smallSpring.beans.factorybean.FactoryBean;
@@ -14,7 +16,7 @@ public  abstract  class AbstractBeanFactory  extends DefaultSingletonBeanRegistr
     private final List<BeanPostProcessor> beanPostProcessors = new ArrayList<BeanPostProcessor>();
 
     private ClassLoader beanClassLoader=Thread.currentThread().getContextClassLoader();
-    private final Map<String, RootBeanDefinition> MergedBeanDefinitions =
+    public final Map<String, RootBeanDefinition> MergedBeanDefinitions =
             new ConcurrentHashMap<String, RootBeanDefinition>(256);
     private final Map<Class<?>,Set<String>>classBeanDefinitionMap
             =new ConcurrentHashMap<Class<?>, Set<String>>(256);
@@ -72,13 +74,11 @@ public  abstract  class AbstractBeanFactory  extends DefaultSingletonBeanRegistr
 
        return classBeanDefinitionMap.get(cls);
    }
-   public void setBeanDefintionByType(String name)
+   public void DosetBeanDefintionByType(String name,Class<?>c)
    {
 
-       Class c= MergedBeanDefinitions.get(name).getBeanClass();
        if(!classBeanDefinitionMap.containsKey(c))
        {
-
            classBeanDefinitionMap.put(c,(new TreeSet<String>()));
        }
        classBeanDefinitionMap.get(c).add(name);
@@ -89,6 +89,11 @@ public  abstract  class AbstractBeanFactory  extends DefaultSingletonBeanRegistr
     protected void removeMergedLocalBeanDefintion(String beanName) throws BeansException {
          MergedBeanDefinitions.remove(beanName);
     }
+    protected  void registerMergedLocalBeanDefintion(String beanName,RootBeanDefinition beanDefinition)
+    {
+       MergedBeanDefinitions.put(beanName,beanDefinition);
+    }
+
     protected  int getMergedLocalBeanDefintionCount()
     {
         return MergedBeanDefinitions.size();

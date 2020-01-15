@@ -1,6 +1,7 @@
 package smallSpring.factory;
 
 import smallSpring.beandefiniton.BeanDefinition;
+import smallSpring.beandefiniton.RootBeanDefinition;
 import smallSpring.context.AbstractApplicationContext;
 import smallSpring.context.ConfigurableApplicationContext;
 import smallSpring.exception.BeansException;
@@ -12,11 +13,27 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFactory
         implements ConfigurableListableBeanFactory,BeanDefinitionRegistry{
-    private final Map<String, BeanDefinition> beanDefinitionMap = new ConcurrentHashMap<String, BeanDefinition>(256);
+//    private final Map<String, BeanDefinition> beanDefinitionMap = new ConcurrentHashMap<String, BeanDefinition>(256);
+
+    @Override
+    public void preInstantiateSingletons() {
+                for(Map.Entry<String,RootBeanDefinition> entry:MergedBeanDefinitions.entrySet())
+                {
+                    if(entry.getValue().isSingleton())
+                    {
+                        getBean(entry.getKey());
+                    }
+                }
+    }
 
     @Override
     public int getBeanDefinitionCount() {
         return getMergedLocalBeanDefintionCount();
+    }
+
+    @Override
+    public void registerBeanDefinition(String beanName, BeanDefinition beanDefinition) {
+         registerMergedLocalBeanDefintion(beanName,(RootBeanDefinition) beanDefinition);
     }
 
     @Override
@@ -30,7 +47,10 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
         return getMergedLocalBeanDefintion(beanName);
     }
 
-
+    @Override
+    public void setBeanDefintionByType(String beanName, Class c) {
+        DosetBeanDefintionByType(beanName,c);
+    }
 
     @Override
     public String[] getBeanDefinitionNames() {
@@ -50,6 +70,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
         return res;
 
     }
+
 
     public DefaultListableBeanFactory() {
 
