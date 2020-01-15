@@ -11,22 +11,20 @@ public abstract class AbstractApplicationContext  implements  ConfigurableApplic
 
     @Override
     public void refresh() throws BeansException {
-        DefaultListableBeanFactory beanFactory=obtainFreshBeanFactory();
+        ConfigurableListableBeanFactory beanFactory=obtainFreshBeanFactory();
         finishBeanFactoryInitialization(beanFactory);
     }
 
-    protected  AbstractAutowireCapableBeanFactory obtainFreshBeanFactory()
+    protected  ConfigurableListableBeanFactory obtainFreshBeanFactory()
     {
         refreshBeanFactory();
 
-         beanFactory=getBeanFactory();
+        ConfigurableListableBeanFactory beanFactory=getBeanFactory();
         return beanFactory;
     }
 
     protected abstract void refreshBeanFactory();
 
     @Override
-    public BeanFactory getBeanFactory() {
-        return null;
-    }
+    public abstract ConfigurableListableBeanFactory getBeanFactory() ;
 }

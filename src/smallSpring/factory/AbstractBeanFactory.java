@@ -86,6 +86,24 @@ public  abstract  class AbstractBeanFactory  extends DefaultSingletonBeanRegistr
     protected RootBeanDefinition getMergedLocalBeanDefintion(String beanName) throws BeansException {
         return MergedBeanDefinitions.get(beanName);
     }
+    protected void removeMergedLocalBeanDefintion(String beanName) throws BeansException {
+         MergedBeanDefinitions.remove(beanName);
+    }
+    protected  int getMergedLocalBeanDefintionCount()
+    {
+        return MergedBeanDefinitions.size();
+    }
+    protected  String[] getMergedLocalBeanName()
+    {
+        String[]res=new String[getMergedLocalBeanDefintionCount()];
+        int i=0;
+        for(String s:MergedBeanDefinitions.keySet())
+        {
+                res[i]=s;
+                i++;
+        }
+        return res;
+    }
     protected Object getObjectForBeanInstance(Object sharedInstance, String name ) {
         if(!(sharedInstance instanceof FactoryBean))
         {

@@ -7,6 +7,7 @@ import smallSpring.exception.BeansException;
 import smallSpring.registry.BeanDefinitionRegistry;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFactory
@@ -15,27 +16,39 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 
     @Override
     public int getBeanDefinitionCount() {
-        return 0;
+        return getMergedLocalBeanDefintionCount();
     }
 
     @Override
     public void removeBeanDefinition(String beanName) {
+        removeMergedLocalBeanDefintion(beanName);
 
     }
 
     @Override
-    public BeanDefinition getMergedLocalBeanDefintion(String beanName) {
-        return null;
+    public BeanDefinition getBeanDefinition(String beanName) {
+        return getMergedLocalBeanDefintion(beanName);
     }
+
+
 
     @Override
     public String[] getBeanDefinitionNames() {
-        return new String[0];
+       return getMergedLocalBeanName();
     }
 
     @Override
     public String[] getBeanNamesForType(Class<?> c) {
-        return new String[0];
+        Set<String> set=getBeanDefintionByType(c);
+        String[]res=new String[set.size()];
+               int i=0;
+               for( String s:set)
+               {
+                   res[i]=s;
+                   i++;
+               }
+        return res;
+
     }
 
     public DefaultListableBeanFactory() {
