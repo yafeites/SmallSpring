@@ -9,8 +9,9 @@ import java.nio.file.FileSystem;
 public class FileSystemApplicationContext extends AbstractXmlApplicationContext {
     public static void main(String[] args) {
         FileSystemApplicationContext applicationContext=new FileSystemApplicationContext("classpath:application.xml");
-        Person p=(Person)applicationContext.getBean("person");
-        System.out.println(p.getAge());
+        Person p=(Person)applicationContext.getBean("wangyijiang");
+        System.out.println(p.getBoss());
+
     }
     @Override
     protected Resource getResourceByPath(String path) {

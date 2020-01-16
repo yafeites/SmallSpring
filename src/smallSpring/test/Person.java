@@ -1,16 +1,25 @@
 package smallSpring.test;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 public class Person {
+    public static void main(String[] args) throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
+        Class C=Person.class;
+        Person p=(Person)C.newInstance();
+        Method method=C.getDeclaredMethod("setName",String.class);
+        method.invoke((Object) p,"xiaoming");
+    }
     private int age;
 
-    private String name;
+    private Boss boss;
 
-    public String getName() {
-        return name;
+    public Boss getBoss() {
+        return boss;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setBoss(Boss boss) {
+        this.boss = boss;
     }
 
     public int getAge() {

@@ -14,4 +14,6 @@ public interface BeanWrapper {
     void setPropertyValuetoBean(MutablePropertyValues mutablePropertyValues);
     PropertyDescriptor getPropertyDescriptor(String name);
     PropertyDescriptor[] getPropertyDescriptors();
+
+
 }

@@ -134,12 +134,22 @@ public abstract  class AbstractAutowireCapableBeanFactory extends  AbstractBeanF
                 Object originalValue = pv.getValue();
                 Object resolvedValue = valueResolver.resolveValueIfNecessary(pv, originalValue);
                 Object convertedValue = resolvedValue;
+                convertedValue = convertForProperty(resolvedValue, propertyName, (BeanWrapperImpl)bw);
                     pv.setConvertedValue(convertedValue);
                 deepCopy.add(pv);
             }
+
         }
         bw.setPropertyValuetoBean(new MutablePropertyValues(deepCopy));
     }
+
+    protected  Object convertForProperty(Object value, String propertyName, BeanWrapperImpl bw)
+    {
+
+        return bw.convertForProperty(value,propertyName);
+
+    }
+
     protected  BeanWrapper createBeanInstance(String beanName, RootBeanDefinition mbd)
     {
         return instantiateBean(beanName, mbd);

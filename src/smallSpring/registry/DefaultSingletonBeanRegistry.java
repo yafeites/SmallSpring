@@ -66,6 +66,7 @@ public class DefaultSingletonBeanRegistry implements SingletonBeanFactory {
             Object singletonObject=this.singletonObjects.get(beanName);;
             if(singletonObject==null)
             {
+                beforeSingletonCreation(beanName);
                 singletonObject = singletonFactory.getObject();
                 addSingleton(beanName, singletonObject);
             }

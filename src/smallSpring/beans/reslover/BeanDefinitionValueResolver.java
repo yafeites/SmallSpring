@@ -45,7 +45,7 @@ public class BeanDefinitionValueResolver {
                 e.printStackTrace();
             }
         }
-          return  null;
+          return  value;
     }
 
     private Class<?> resolveTargetType(TypedStringValue typedStringValue) {

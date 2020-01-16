@@ -39,7 +39,6 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
     @Override
     public void removeBeanDefinition(String beanName) {
         removeMergedLocalBeanDefintion(beanName);
-
     }
 
     @Override

@@ -9,6 +9,8 @@ import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 
 public class BeanWrapperImpl implements  BeanWrapper  , TypeConverter {
     Object wrapperObject;
@@ -42,6 +44,45 @@ public class BeanWrapperImpl implements  BeanWrapper  , TypeConverter {
     public <T> T convertIfNecessary(Object value, Class<T> requiredType) {
         return requiredType.cast(value);
     }
+    private Object convert(Object value,Class<?>targetClass)
+    {
+        String TextValue;
+        try
+        {
+           TextValue =(String)value;
+        }
+       catch ( Exception e)
+       {
+           System.out.println(value);
+           return  value;
+       }
+        if (Byte.class == targetClass||targetClass==byte.class) {
+            return  Byte.valueOf(TextValue);
+        }
+
+        else if (Short.class == targetClass||targetClass==short.class) {
+            return  Short.valueOf(TextValue);
+        }
+        else if (Integer.class == targetClass||targetClass==int.class) {
+            return  Integer.valueOf(TextValue);
+        }
+        else if (Long.class == targetClass||targetClass==long.class) {
+            return Long.valueOf(TextValue);
+        }
+        else if (BigInteger.class == targetClass) {
+            return new BigInteger(TextValue);
+        }
+        else if (Float.class == targetClass||targetClass==float.class) {
+            return Float.valueOf(TextValue);
+        }
+        else if (Double.class == targetClass||targetClass==double.class) {
+            return Double.valueOf(TextValue);
+        }
+        else if (BigDecimal.class == targetClass || Number.class == targetClass) {
+            return new BigDecimal(TextValue);
+        }
+        else  return   value;
+    }
 
     @Override
     public void setPropertyValuetoBean(MutablePropertyValues mutablePropertyValues) {
@@ -59,23 +100,26 @@ public class BeanWrapperImpl implements  BeanWrapper  , TypeConverter {
 
         }
     }
+    //
     public Object convertForProperty(Object value, String propertyName)
     {
         CachedIntrospectionResults cachedIntrospectionResults = getCachedIntrospectionResults();
         PropertyDescriptor pd = cachedIntrospectionResults.getPropertyDescriptor(propertyName);
-
+       return  convert(value,pd.getWriteMethod().getParameterTypes()[0]);
     }
 
     private void setPropertyValuetoBean(String name, Object value) {
         PropertyDescriptor pd=getCachedIntrospectionResults().getPropertyDescriptor(name);
         Method writeMethod=pd.getWriteMethod();
         try {
+//            System.out.println(value.getClass());
             writeMethod.invoke(wrapperObject,value);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } catch (InvocationTargetException e) {
             e.printStackTrace();
         }
+
     }
 
     private CachedIntrospectionResults getCachedIntrospectionResults() {
@@ -88,4 +132,5 @@ public class BeanWrapperImpl implements  BeanWrapper  , TypeConverter {
         }
         return this.cachedIntrospectionResults;
     }
+
 }
