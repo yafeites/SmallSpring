@@ -1,7 +1,7 @@
 package smallSpring.resourceloader;
 
 
-import org.omg.Messaging.SYNC_WITH_TRANSPORT;
+
 import smallSpring.resource.ClassPathResource;
 import smallSpring.resource.Resource;
 

@@ -29,12 +29,16 @@ public class AbstractBeanDefinition implements   BeanDefinition {
         this.scope = scope;
     }
 
+    public AbstractBeanDefinition() {
+        setPropertyValues(null);
+    }
+
     public MutablePropertyValues getPropertyValues() {
         return mutablePropertyValues;
     }
 
     public void setPropertyValues(MutablePropertyValues propertyValues) {
-        this.mutablePropertyValues = propertyValues;
+        this.mutablePropertyValues = (propertyValues != null ? propertyValues : new MutablePropertyValues());
     }
 
     private Class beanClass;

@@ -36,7 +36,7 @@ public class PropertyValue {
     }
 
     public  synchronized  void setConvertedValue(Object convertedValue) {
-        convertedValue=convertedValue;
+        this.convertedValue=convertedValue;
         converted=true;
     }
 }

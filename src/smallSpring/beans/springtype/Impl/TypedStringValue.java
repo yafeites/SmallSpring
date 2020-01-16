@@ -1,6 +1,6 @@
 package smallSpring.beans.springtype.Impl;
 
-import com.sun.org.apache.regexp.internal.RE;
+
 
 public class TypedStringValue {
     private String value;
@@ -33,11 +33,11 @@ public class TypedStringValue {
     }
 
     public Class<?> resloveTargetType(ClassLoader beanClassLoader) {
-        try {
-            return beanClassLoader==null? beanClassLoader.loadClass(TargetTypeName) : Class.forName(TargetTypeName);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            return beanClassLoader==null? beanClassLoader.loadClass(TargetTypeName) : Class.forName(TargetTypeName);
+//        } catch (ClassNotFoundException e) {
+//            e.printStackTrace();
+//        }
         return null;
     }
 

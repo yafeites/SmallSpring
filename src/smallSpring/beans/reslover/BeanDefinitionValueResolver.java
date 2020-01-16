@@ -32,7 +32,7 @@ public class BeanDefinitionValueResolver {
         }
         else if (value instanceof TypedStringValue) {
             TypedStringValue typedStringValue = (TypedStringValue) value;
-           Object valueObject=value;
+           Object valueObject=((TypedStringValue) value).getValue();
             try {
                 Class<?> resolvedTargetType = resolveTargetType(typedStringValue);
                 if (resolvedTargetType != null) {

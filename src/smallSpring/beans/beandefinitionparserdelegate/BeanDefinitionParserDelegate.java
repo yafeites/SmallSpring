@@ -25,8 +25,8 @@ public class BeanDefinitionParserDelegate {
     private static final String REF_ATTRIBUTE ="ref";
     private static final String VALUE_ATTRIBUTE ="value";
 
-    public boolean nodeNameEquals(Element ele, String name) {
-        return ele.getNodeName()==name;
+    public boolean nodeNameEquals(Node node, String name) {
+        return node.getNodeName()==name;
     }
 
     public BeanDefinitionHolder parseBeanDefinitionElement(Element ele) {
@@ -61,7 +61,7 @@ public class BeanDefinitionParserDelegate {
         for(int i=0;i<nodeList.getLength();i++)
         {
             Node node=nodeList.item(i);
-            if(nodeNameEquals((Element) node,PROPERTY_ELEMENT))
+            if(nodeNameEquals(node,PROPERTY_ELEMENT))
             {
                 parsePropertyElement((Element) node, bd);
             }

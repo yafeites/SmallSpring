@@ -8,6 +8,8 @@ public class AbstractXmlApplicationContext extends AbstractRefreshableApplicatio
     @Override
     protected void loadBeanDefinitions(DefaultListableBeanFactory beanFactory) {
         XmlBeanDefinitionReader beanDefinitionReader = new XmlBeanDefinitionReader(beanFactory);
+
+        beanDefinitionReader.setResourceLoader(this);
         loadBeanDefinitions(beanDefinitionReader);
     }
 

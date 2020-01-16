@@ -48,15 +48,29 @@ public class BeanWrapperImpl implements  BeanWrapper  , TypeConverter {
 
         for(PropertyValue pv:mutablePropertyValues.getPropertyValues())
         {
-            setPropertyValuetoBean(pv.getName(), pv.getValue());
+            if(pv.isConverted())
+            {
+                setPropertyValuetoBean(pv.getName(),pv.getConvertedValue());
+            }
+            else
+            {
+                setPropertyValuetoBean(pv.getName(), pv.getValue());
+            }
+
         }
+    }
+    public Object convertForProperty(Object value, String propertyName)
+    {
+        CachedIntrospectionResults cachedIntrospectionResults = getCachedIntrospectionResults();
+        PropertyDescriptor pd = cachedIntrospectionResults.getPropertyDescriptor(propertyName);
+
     }
 
     private void setPropertyValuetoBean(String name, Object value) {
         PropertyDescriptor pd=getCachedIntrospectionResults().getPropertyDescriptor(name);
         Method writeMethod=pd.getWriteMethod();
         try {
-            writeMethod.invoke(value);
+            writeMethod.invoke(wrapperObject,value);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } catch (InvocationTargetException e) {

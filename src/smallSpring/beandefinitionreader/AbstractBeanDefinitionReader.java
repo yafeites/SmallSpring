@@ -6,6 +6,7 @@ import smallSpring.documentloader.DefaultDocumentLoader;
 import smallSpring.documentloader.DocumentLoader;
 import smallSpring.registry.BeanDefinitionRegistry;
 import smallSpring.resource.Resource;
+import smallSpring.resourceloader.DefaultResourceLoader;
 import smallSpring.resourceloader.ResourceLoader;
 
 import java.io.IOException;
@@ -17,11 +18,13 @@ public  abstract  class AbstractBeanDefinitionReader implements  BeanDefinitionR
     private DocumentLoader documentLoader = new DefaultDocumentLoader();
     AbstractBeanDefinitionReader(BeanDefinitionRegistry registry) {
         this.registry=registry;
-        if (this.registry instanceof ResourceLoader) {
-            this.resourceLoader = (ResourceLoader) this.registry;
-        }
     }
 
+
+    public  void setResourceLoader(ResourceLoader  resourceLoader)
+    {
+         this.resourceLoader=resourceLoader;
+    }
     @Override
     public ResourceLoader getResourceLoader() {
         return this.resourceLoader;
