@@ -26,12 +26,14 @@ public  abstract  class AbstractBeanFactory  extends DefaultSingletonBeanRegistr
     }
     protected  <T> T doGetBean(final String beanName)
     {
+//        从缓存中获取
         Object sharedInstance=getSingleton(beanName);
         Object bean;
         if(sharedInstance!=null)
         {
             bean=getObjectForBeanInstance(sharedInstance, beanName);
         }
+//        缓存中不存在创建一个全新的Bean
         else
         {
             final RootBeanDefinition mbd = getMergedLocalBeanDefintion(beanName);
