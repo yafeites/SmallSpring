@@ -48,6 +48,7 @@ public abstract  class AbstractAutowireCapableBeanFactory extends  AbstractBeanF
     }
 
      void autowireByName(String beanName, RootBeanDefinition mbd, BeanWrapper bw, MutablePropertyValues newPvs) {
+//        非基本参数并且并未直接设置参数对应的值的抽取
         String[] propertyNames = unsatisfiedNonSimpleProperties(mbd, bw);
         for (String propertyName : propertyNames) {
             if (containsBean(propertyName)&&beanName!=propertyName) {
@@ -60,6 +61,7 @@ public abstract  class AbstractAutowireCapableBeanFactory extends  AbstractBeanF
 
 
     private void autowireByType(String beanName, RootBeanDefinition mbd, BeanWrapper bw, MutablePropertyValues newPvs) {
+        //        非基本参数并且并未直接设置参数对应的值的抽取
         String[] propertyNames = unsatisfiedNonSimpleProperties(mbd, bw);
         for (String propertyName : propertyNames) {
             PropertyDescriptor pd=bw.getPropertyDescriptor(propertyName);
@@ -86,7 +88,7 @@ public abstract  class AbstractAutowireCapableBeanFactory extends  AbstractBeanF
 //        创建包装bean的类
         instanceWrapper = createBeanInstance(beanName, mbd);
         final Object bean = (instanceWrapper != null ? instanceWrapper.getWrappedInstance() : null);
-//        增添
+//        增添单例Bean构造工厂，用于三层缓存
         if(mbd.isSingleton())
         {
             addSingletonFactory(beanName, new ObjectFactory<Object>() {

@@ -1,7 +1,5 @@
 <beans>
     <bean id="person" class="smallSpring.test.Person">
-        <property name="name" value="wangyijiang">
-        </property>
         <property name="age" value="24">
         </property>
     </bean>

@@ -44,11 +44,14 @@ public class DefaultSingletonBeanRegistry implements SingletonBeanFactory {
 
 
     private Object getSingleton(String beanName, boolean allowEarlyReference) {
+//        首先从一层缓存取值
         Object singletonObject = this.singletonObjects.get(beanName);
         if (singletonObject == null && isSingletonCurrentlyInCreation(beanName)) {
+//            如果不存在则从二层缓存取值
             synchronized (this.singletonObjects) {
                 singletonObject = this.earlySingletonObjects.get(beanName);
                 if (singletonObject == null && allowEarlyReference) {
+//                    如果还是不存在则利用三层缓存的工厂创建Bean
                     ObjectFactory<?> singletonFactory = this.singletonFactories.get(beanName);
                     if (singletonFactory != null) {
                         singletonObject = singletonFactory.getObject();
@@ -66,8 +69,11 @@ public class DefaultSingletonBeanRegistry implements SingletonBeanFactory {
             Object singletonObject=this.singletonObjects.get(beanName);;
             if(singletonObject==null)
             {
+//                检查此bean是否正在创建
                 beforeSingletonCreation(beanName);
+//                创建Bean
                 singletonObject = singletonFactory.getObject();
+                //增加Bean到缓存中
                 addSingleton(beanName, singletonObject);
             }
             return singletonObject==NULL_OBJECT? null: singletonObject;

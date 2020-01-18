@@ -158,8 +158,6 @@
 
 ![image-20200117120611875](C:\Users\yafeites\AppData\Roaming\Typora\typora-user-images\image-20200117120611875.png)
 
-**流程如下**
-
 ![**image-20200117120739998**](C:\Users\yafeites\AppData\Roaming\Typora\typora-user-images\image-20200117120739998.png)
 
 
@@ -180,7 +178,7 @@
 
 
 
-#### 3.预加载单例Bean**
+#### 3.预加载单例Bean
 
  **在Context refresh的最后阶段预加载单例Bean** 
 
@@ -198,5 +196,65 @@
 
 
 
+##### **创建Bean的步骤**
 
+**1.创建Bean的包装类BeanWrapper，并且根据包装类创建实例Bean**
+
+**2.增加单例Bean构造工厂,用于三层缓存**
+
+**3.给bean添加参数**
+
+**4.bean最终初始化**
+
+![image-20200118102105813](C:\Users\yafeites\AppData\Roaming\Typora\typora-user-images\image-20200118102105813.png)
+
+
+
+
+
+## 具体问题的实现原理
+
+#### **1.ByName和ByType的自动配置**
+
+![image-20200118103324630](C:\Users\yafeites\AppData\Roaming\Typora\typora-user-images\image-20200118103324630.png)
+
+****
+
+**ByName：实际直接根据PropertyName创建Bean即可**
+
+**ByType：维持一个map，名为classBeanDefinitionMap，Key为Class类型，Value为RootBeanDefinition类型，在注册BeanDefinition时，根据Bean类型注册进入map**
+
+
+
+![image-20200118103909041](C:\Users\yafeites\AppData\Roaming\Typora\typora-user-images\image-20200118103909041.png)
+
+#### **2.循环引用问题**
+
+**循环引用是由于A引用B，B引用A而导致的单线程创建死循环问题，函数将在参数注入时一直调用getBean方法**
+
+**解决方法：采用三层缓存**
+
+![image-20200118104420774](C:\Users\yafeites\AppData\Roaming\Typora\typora-user-images\image-20200118104420774.png)
+
+**一层缓存：singletonObjects**
+**二层缓存：erarlySingletonObjects**
+**三层缓存：singletonFactories**
+
+
+
+![image-20200118104905204](C:\Users\yafeites\AppData\Roaming\Typora\typora-user-images\image-20200118104905204.png)
+
+
+
+**在三层缓存创建完后将未完成的Bean移到二层缓存，而当Bean创建完成后会将二层，三层的Bean删除，留在一层缓存中**
+
+![image-20200118105148685](C:\Users\yafeites\AppData\Roaming\Typora\typora-user-images\image-20200118105148685.png)
+
+**所以我们只要将三层缓存的singleFactory工厂放在Bean的创建过程中即可，但必须保证在Bean的参数注入前，这样才能起作用，实际也是如此**
+
+![image-20200118105337208](C:\Users\yafeites\AppData\Roaming\Typora\typora-user-images\image-20200118105337208.png)
+
+
+
+## 总结
 
