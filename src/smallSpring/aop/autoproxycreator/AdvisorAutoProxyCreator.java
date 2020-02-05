@@ -2,6 +2,7 @@ package smallSpring.aop.autoproxycreator;
 
 import smallSpring.aop.advisor.Advisor;
 import smallSpring.aop.beanfactoryaware.BeanFactoryAware;
+import smallSpring.aop.methodinterceptor.MethodInterceptor;
 import smallSpring.beanpostprocessor.BeanPostProcessor;
 import smallSpring.exception.BeansException;
 import smallSpring.factory.BeanFactory;
