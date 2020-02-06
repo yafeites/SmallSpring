@@ -20,7 +20,7 @@ public class DefaultAdvisorAdapterRegister implements AdvisorAdapterRegistry {
         Advice advice=advisor.getAdvice();
         for(AdvisorAdapter adapter:this.adapters)
         {
-                  if(adapter.supportAdvice(advice))                                                                                                                                           b 4
+                  if(adapter.supportAdvice(advice))
             {
                 interceptors.add(adapter.getInterceptor(advisor));
             }

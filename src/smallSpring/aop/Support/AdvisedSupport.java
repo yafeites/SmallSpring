@@ -1,7 +1,9 @@
 package smallSpring.aop.Support;
 
 import smallSpring.aop.advisor.Advisor;
+import smallSpring.aop.classfilter.ClassFilter;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -29,5 +31,9 @@ public class AdvisedSupport  {
     public  AdvisorChainFactory getAdvisorChainFactory()
     {
         return this.advisorChainFactory;
+    }
+    public List<Object> getIntetceptorsAndDynamicInterceptionAdvice(Method method, Class<?>targetClass)
+    {
+        return getAdvisorChainFactory().getInterceptorAndDynamicInterceptionAdvice(this,method,targetClass);
     }
 }
