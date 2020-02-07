@@ -5,5 +5,5 @@ import java.lang.reflect.Proxy;
 
 public interface  ProxyMethodInvocation extends  MethodInvocation {
     Method getMetod();
-    Proxy getProxy();
+    Object getProxy();
 }

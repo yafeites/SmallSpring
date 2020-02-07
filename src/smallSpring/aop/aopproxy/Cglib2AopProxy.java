@@ -15,18 +15,24 @@ import net.sf.cglib.proxy.MethodProxy;
 import smallSpring.aop.methodinvocation.ReflectiveMethodInvocation;
 
 public class Cglib2AopProxy implements  AopProxy  {
+    AdvisedSupport advised;
+
+    public Cglib2AopProxy(AdvisedSupport advised) {
+        this.advised = advised;
+    }
 
     @Override
     public Object getProxy() {
         Enhancer enhancer = new Enhancer();
         enhancer.setSuperclass(advised.getTargetSource().getTargetClass());
-        enhancer.setInterfaces(advised.getTargetSource().getInterfaces());
+        Class<?>[]Interfaces=advised.getTargetSource().getTargetClass().getInterfaces();
+        enhancer.setInterfaces(Interfaces);
         enhancer.setCallback(new DynamicAdvisedInterceptor(advised));
         Object enhanced = enhancer.create();
         return enhanced;
     }
 
-    private static class DynamicAdvisedInterceptor implements CGlibMethodInterceptor {
+    private static class DynamicAdvisedInterceptor implements MethodInterceptor {
 
         private AdvisedSupport advised;
         private DynamicAdvisedInterceptor(AdvisedSupport advised) {
@@ -34,9 +40,11 @@ public class Cglib2AopProxy implements  AopProxy  {
         }
 
         @Override
-        public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
-
-            return new CglibMethodInvocation(advised.getTargetSource().getTarget(), method, args, proxy).proceed();
+        public Object intercept(Object proxy, Method method, Object[] args, MethodProxy methodProxy) throws Throwable {
+            Object target=advised.getTargetSource().getTarget();
+            List<?>chain=advised.getIntetceptorsAndDynamicInterceptionAdvice(method
+                    ,target.getClass());
+            return new CglibMethodInvocation(args,target,method,proxy,chain,methodProxy).proceed();
         }
     }
 
@@ -45,19 +53,16 @@ public class Cglib2AopProxy implements  AopProxy  {
         private final MethodProxy methodProxy;
 
         @Override
-        protected Object invokeJoinPoint() throws InvocationTargetException, IllegalAccessException {
+        protected Object invokeJoinPoint() throws Throwable {
             return this.methodProxy.invoke(this.target,this.arguments);
         }
 
-        public CglibMethodInvocation(Object[] arguments, Object target, Class<?> targetClass, Method method, Proxy proxy, List<?> interceptorsAndMDynamicMethodMatchers, MethodProxy methodProxy) {
-            super(arguments, target, targetClass, method, proxy, interceptorsAndMDynamicMethodMatchers);
+        public CglibMethodInvocation(Object[] arguments, Object target, Method method, Object proxy, List<?> interceptorsAndMDynamicMethodMatchers, MethodProxy methodProxy) {
+            super(arguments, target, method, proxy, interceptorsAndMDynamicMethodMatchers);
             this.methodProxy = methodProxy;
         }
 
 
-        @Override
-        public Object proceed()   {
-            return this.methodProxy.invoke(this.target, this.arguments);
-        }
+
     }
 }
