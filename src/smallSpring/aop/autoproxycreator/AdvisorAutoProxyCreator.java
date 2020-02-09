@@ -4,9 +4,11 @@ import smallSpring.aop.Support.ProxyFactory;
 import smallSpring.aop.advisor.Advisor;
 import smallSpring.aop.beanfactoryaware.BeanFactoryAware;
 import smallSpring.aop.methodinterceptor.MethodInterceptor;
+import smallSpring.aop.targetsource.CustomClassTargetSource;
 import smallSpring.aop.targetsource.SingletonTargetSource;
 import smallSpring.aop.targetsource.TargetSource;
 import smallSpring.beanpostprocessor.BeanPostProcessor;
+import smallSpring.beanpostprocessor.InstantiationAwareBeanPostProcessor;
 import smallSpring.exception.BeansException;
 import smallSpring.factory.BeanFactory;
 
@@ -14,41 +16,44 @@ import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AdvisorAutoProxyCreator implements BeanPostProcessor, BeanFactoryAware {
+public class AdvisorAutoProxyCreator implements InstantiationAwareBeanPostProcessor, BeanFactoryAware {
    BeanFactory beanFactory;
 
-    public String[] getInterceptorNames() {
-        return interceptorNames;
+    public String getInterceptorName() {
+        return interceptorName;
     }
 
-    public void setInterceptorNames(String[] interceptorNames) {
-        this.interceptorNames = interceptorNames;
+    public void setInterceptorName(String interceptorNames) {
+        this.interceptorName = interceptorNames;
     }
 
-    String[]interceptorNames;
+    String interceptorName;
+
+    public String getCls() {
+        return ProxyCls;
+    }
+
+    public void setCls(String cls) {
+        this.ProxyCls = cls;
+    }
+
+    String ProxyCls;
     @Override
+
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
         return bean;
     }
 
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-        if (bean instanceof Advisor) {
-            return bean;
-        }
-        if (bean instanceof MethodInterceptor) {
-            return bean;
-        }
-        Object proxy=crateProxy(new SingletonTargetSource(bean));
-        return proxy;
-
+                return  bean;
     }
     Advisor[]resloveInterceptorNames()
     {
         List<Advisor> advisors=new ArrayList<>();
-        for(String beanName:interceptorNames)
+
         {
-            Object bean=this.beanFactory.getBean(beanName);
+            Object bean=this.beanFactory.getBean(interceptorName);
             advisors.add((Advisor) bean);
         }
         return advisors.toArray(new Advisor[advisors.size()]);
@@ -66,4 +71,34 @@ public class AdvisorAutoProxyCreator implements BeanPostProcessor, BeanFactoryAw
             this.beanFactory=beanFactory;
     }
 
+    @Override
+    public Object postProcessBeforeInstantiation(Class<?> beanClass, String beanName) {
+        if ( Advisor.class.isAssignableFrom(beanClass)) {
+            return null;
+        }
+        if ( MethodInterceptor.class.isAssignableFrom(beanClass)) {
+            return null;
+        }
+        if(BeanPostProcessor.class.isAssignableFrom(beanClass))
+        {
+            return  null;
+        }
+        try {
+            if(beanClass==Class.forName(ProxyCls))
+            {
+                Object proxy=crateProxy(new CustomClassTargetSource(beanClass));
+                return proxy;
+            }
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+
+    }
+
+    @Override
+    public Object postProcessAfterInstantiation(Class<?> beanClass, String beanName) {
+        return null;
+    }
 }

@@ -1,6 +1,7 @@
 package smallSpring.context;
 
 import smallSpring.beandefiniton.RootBeanDefinition;
+import smallSpring.beans.delegate.PostProcessorRegistrationDelegate;
 import smallSpring.exception.BeansException;
 import smallSpring.factory.AbstractAutowireCapableBeanFactory;
 import smallSpring.factory.BeanFactory;
@@ -15,8 +16,15 @@ public abstract class AbstractApplicationContext   extends DefaultResourceLoader
     public void refresh() throws BeansException {
 //        增添BeanFactory
         ConfigurableListableBeanFactory beanFactory=obtainFreshBeanFactory();
+//         注册beanProcesssors
+        registerBeanPostProcessors(beanFactory);
 //        结束Factory的构建
         finishBeanFactoryInitialization(beanFactory);
+    }
+
+    protected  void registerBeanPostProcessors(ConfigurableListableBeanFactory beanFactory)
+    {
+        PostProcessorRegistrationDelegate.registerBeanPostProcessors(beanFactory,this);
     }
 
     protected  void finishBeanFactoryInitialization(ConfigurableListableBeanFactory beanFactory)
@@ -24,10 +32,10 @@ public abstract class AbstractApplicationContext   extends DefaultResourceLoader
         beanFactory.preInstantiateSingletons();
     }
 
-    private void preInstantiateSingletons() {
-
-
-    }
+//    private void preInstantiateSingletons() {
+//
+//
+//    }
 
     protected  ConfigurableListableBeanFactory obtainFreshBeanFactory()
     {

@@ -1,5 +1,6 @@
 package smallSpring.factory;
 
+import smallSpring.aop.beanfactoryaware.BeanFactoryAware;
 import smallSpring.beandefiniton.BeanDefinition;
 import smallSpring.beandefiniton.RootBeanDefinition;
 import smallSpring.beanpostprocessor.BeanPostProcessor;
@@ -178,13 +179,20 @@ public abstract  class AbstractAutowireCapableBeanFactory extends  AbstractBeanF
     @Override
     public Object initializeBean(Object bean, String beanName) throws BeansException {
         Object result=bean;
+        invokeAwareMethods(beanName,bean);
         for (BeanPostProcessor beanProcessor : getBeanPostProcessors()) {
             result= beanProcessor.postProcessBeforeInitialization(bean, beanName);
         }
         return  result;
     }
-
-
+    //如果是特殊Bean设置相关参数
+     void invokeAwareMethods(String beanName, Object bean)
+     {
+      if(bean instanceof BeanFactoryAware)
+      {
+          ((BeanFactoryAware)bean).setFactory(this);
+      }
+     }
 
 
     //   初始化BeanWrapper

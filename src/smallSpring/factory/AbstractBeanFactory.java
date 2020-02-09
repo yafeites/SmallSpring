@@ -12,7 +12,7 @@ import smallSpring.registry.DefaultSingletonBeanRegistry;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-public  abstract  class AbstractBeanFactory  extends DefaultSingletonBeanRegistry implements  BeanFactory{
+public  abstract  class AbstractBeanFactory  extends DefaultSingletonBeanRegistry implements  ConfiguableBeanFactory{
     private final List<BeanPostProcessor> beanPostProcessors = new ArrayList<BeanPostProcessor>();
 
     private ClassLoader beanClassLoader=Thread.currentThread().getContextClassLoader();
@@ -20,6 +20,13 @@ public  abstract  class AbstractBeanFactory  extends DefaultSingletonBeanRegistr
             new ConcurrentHashMap<String, RootBeanDefinition>(256);
     private final Map<Class<?>,Set<String>>classBeanDefinitionMap
             =new ConcurrentHashMap<Class<?>, Set<String>>(256);
+
+    @Override
+    public void addPostProcessors(BeanPostProcessor beanPostProcessor) {
+        beanPostProcessors.add(beanPostProcessor);
+    }
+
+
     @Override
     public Object getBean(String name) throws BeansException {
         return doGetBean(name);
@@ -73,8 +80,16 @@ public  abstract  class AbstractBeanFactory  extends DefaultSingletonBeanRegistr
 
    public Set getBeanDefintionByType(Class<?>cls)
    {
-
-       return classBeanDefinitionMap.get(cls);
+        Set<String>set=new HashSet<>();
+        for(Map.Entry<Class<?>,Set<String>> entry:classBeanDefinitionMap.entrySet())
+        {
+//           如果cls是此类的父类,则加入
+            if(cls.isAssignableFrom(entry.getKey()))
+            {
+                    set.addAll(entry.getValue());
+            }
+        }
+       return set ;
    }
    public void DosetBeanDefintionByType(String name,Class<?>c)
    {

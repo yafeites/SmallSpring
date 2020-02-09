@@ -1,4 +1,4 @@
-package smallSpring.beans.beandefinitionparserdelegate;
+package smallSpring.beans.delegate;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;

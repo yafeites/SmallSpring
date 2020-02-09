@@ -25,7 +25,7 @@ public class AdvisedSupport  {
     }
 
     public void setTargetSource(TargetSource targetSource) {
-        this.targetSource = new SingletonTargetSource(targetSource);
+        this.targetSource = targetSource;
     }
 
     public List<Advisor> getAdvisors() {
