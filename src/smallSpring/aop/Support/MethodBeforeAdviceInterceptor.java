@@ -16,6 +16,12 @@ public class MethodBeforeAdviceInterceptor implements MethodInterceptor {
     @Override
     public Object invoke(MethodInvocation invocation) {
         this.advice.Before(invocation.getMetod(),invocation.getArguments(),invocation.getThis());
-        return  invocation.proceed();
+        try {
+            return  invocation.proceed();
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
+        return null;
+
     }
 }

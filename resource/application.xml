@@ -3,5 +3,14 @@
         <property name="age" value="24">
         </property>
     </bean>
+    <bean id="boss" class="smallSpring.test.Boss"></bean>
+    <bean id="advice" class="smallSpring.aop.advice.Impl.MethodBeforeAdviceImpl"></bean>
+    <bean id="advisor" class="smallSpring.aop.advisor.DefaultPointCutAdvisor">
+        <property name="advice" ref="advice"></property>
+    </bean>
 
+    <bean id="proxyCreator" class="smallSpring.aop.autoproxycreator.AdvisorAutoProxyCreator">
+        <property name="interceptorName" value="advisor"></property>
+        <property name="proxyCls" value="smallSpring.test.Boss"></property>
+    </bean>
 </beans>

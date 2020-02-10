@@ -5,14 +5,12 @@ import smallSpring.aop.advisor.Advisor;
 import smallSpring.aop.beanfactoryaware.BeanFactoryAware;
 import smallSpring.aop.methodinterceptor.MethodInterceptor;
 import smallSpring.aop.targetsource.CustomClassTargetSource;
-import smallSpring.aop.targetsource.SingletonTargetSource;
 import smallSpring.aop.targetsource.TargetSource;
 import smallSpring.beanpostprocessor.BeanPostProcessor;
 import smallSpring.beanpostprocessor.InstantiationAwareBeanPostProcessor;
 import smallSpring.exception.BeansException;
 import smallSpring.factory.BeanFactory;
 
-import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,18 +21,18 @@ public class AdvisorAutoProxyCreator implements InstantiationAwareBeanPostProces
         return interceptorName;
     }
 
-    public void setInterceptorName(String interceptorNames) {
-        this.interceptorName = interceptorNames;
+    public void setInterceptorName(String interceptorName) {
+        this.interceptorName = interceptorName;
     }
 
     String interceptorName;
 
-    public String getCls() {
+    public String getProxyCls() {
         return ProxyCls;
     }
 
-    public void setCls(String cls) {
-        this.ProxyCls = cls;
+    public void setProxyCls(String proxyCls) {
+        ProxyCls = proxyCls;
     }
 
     String ProxyCls;
@@ -46,19 +44,18 @@ public class AdvisorAutoProxyCreator implements InstantiationAwareBeanPostProces
 
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-                return  bean;
+        return  bean;
     }
     Advisor[]resloveInterceptorNames()
     {
         List<Advisor> advisors=new ArrayList<>();
-
         {
             Object bean=this.beanFactory.getBean(interceptorName);
             advisors.add((Advisor) bean);
         }
         return advisors.toArray(new Advisor[advisors.size()]);
     }
-   Object crateProxy( TargetSource targetSource)
+   Object createProxy(TargetSource targetSource)
    {
        ProxyFactory proxyFactory=new ProxyFactory();
        proxyFactory.setTargetSource(targetSource);
@@ -86,7 +83,7 @@ public class AdvisorAutoProxyCreator implements InstantiationAwareBeanPostProces
         try {
             if(beanClass==Class.forName(ProxyCls))
             {
-                Object proxy=crateProxy(new CustomClassTargetSource(beanClass));
+                Object proxy= createProxy(new CustomClassTargetSource(beanClass));
                 return proxy;
             }
         } catch (ClassNotFoundException e) {

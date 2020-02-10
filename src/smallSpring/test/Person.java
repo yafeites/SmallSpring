@@ -4,12 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class Person {
-    public static void main(String[] args) throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
-        Class C=Person.class;
-        Person p=(Person)C.newInstance();
-        Method method=C.getDeclaredMethod("setName",String.class);
-        method.invoke((Object) p,"xiaoming");
-    }
+
     private int age;
 
     private Boss boss;

@@ -1,12 +1,8 @@
 package smallSpring.aop.aopproxy;
 
 import smallSpring.aop.Support.AdvisedSupport;
-import smallSpring.aop.methodinterceptor.CGlibMethodInterceptor;
 
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.util.List;
 
 import net.sf.cglib.proxy.Enhancer;
@@ -41,9 +37,8 @@ public class Cglib2AopProxy implements  AopProxy  {
 
         @Override
         public Object intercept(Object proxy, Method method, Object[] args, MethodProxy methodProxy) throws Throwable {
-            Object target=advised.getTargetSource().getTarget();
-            List<?>chain=advised.getIntetceptorsAndDynamicInterceptionAdvice(method
-                    ,target.getClass());
+            Class<?> targetClass=advised.getTargetSource().getTargetClass();
+            List<?>chain=advised.getIntetceptorsAndDynamicInterceptionAdvice(method,targetClass);
             return new CglibMethodInvocation(args,target,method,proxy,chain,methodProxy).proceed();
         }
     }

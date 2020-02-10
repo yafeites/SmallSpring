@@ -22,7 +22,7 @@ public class DefaultAdvisorChainFactory implements AdvisorChainFactory {
             {
                 PointCutAdvisor pointCutAdvisor=(PointCutAdvisor)advisor;
                 MethodInterceptor[]interceptors=registry.getInterceptors(advisor);
-                MethodMatcher mm=pointCutAdvisor.getPointCut().getMethodMatcher();
+                MethodMatcher mm=pointCutAdvisor.getPointcut().getMethodMatcher();
                 if(mm.matches(method,targetClass))
                 {
                     interceptorlists.addAll(Arrays.asList(interceptors));

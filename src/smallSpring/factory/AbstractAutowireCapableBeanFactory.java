@@ -4,6 +4,7 @@ import smallSpring.aop.beanfactoryaware.BeanFactoryAware;
 import smallSpring.beandefiniton.BeanDefinition;
 import smallSpring.beandefiniton.RootBeanDefinition;
 import smallSpring.beanpostprocessor.BeanPostProcessor;
+import smallSpring.beanpostprocessor.InstantiationAwareBeanPostProcessor;
 import smallSpring.beans.propertyvalue.MutablePropertyValues;
 import smallSpring.beans.propertyvalue.PropertyValue;
 import smallSpring.beans.propertyvalue.PropertyValues;
@@ -79,9 +80,34 @@ public abstract  class AbstractAutowireCapableBeanFactory extends  AbstractBeanF
     }
     protected  Object createBean(String beanName, RootBeanDefinition mbd)
     {
+        Object bean = resolveBeforeInstantiation(beanName, mbd);
+        if (bean != null) {
+            return bean;
+        }
         Object beanInstance = doCreateBean(beanName, mbd );
         return  beanInstance;
     }
+
+    private Object resolveBeforeInstantiation(String beanName, RootBeanDefinition mbd) {
+        Object bean=null;
+        Class<?>targetType=mbd.getBeanClass();
+        bean=applyBeanPostProcessorsBeforeInstantiation(targetType, beanName);
+        return bean;
+    }
+
+    private Object applyBeanPostProcessorsBeforeInstantiation(Class<?> targetType, String beanName) {
+        for(BeanPostProcessor bp:getBeanPostProcessors())
+        {
+            if(bp instanceof InstantiationAwareBeanPostProcessor)
+            {
+                Object res=((InstantiationAwareBeanPostProcessor) bp).postProcessBeforeInstantiation(targetType,beanName);
+                return res;
+            }
+        }
+        return  null;
+    }
+
+
     protected  Object doCreateBean(String beanName,RootBeanDefinition mbd)
     {
 
@@ -135,9 +161,10 @@ public abstract  class AbstractAutowireCapableBeanFactory extends  AbstractBeanF
             {
                 String propertyName = pv.getName();
                 Object originalValue = pv.getValue();
+//                将xml语义类型转成Java类型,例如ref转成实际引用
                 Object resolvedValue = valueResolver.resolveValueIfNecessary(pv, originalValue);
-                Object convertedValue = resolvedValue;
-                convertedValue = convertForProperty(resolvedValue, propertyName, (BeanWrapperImpl)bw);
+//                将 value 转成被用的基本类型
+              Object convertedValue  = convertForProperty(resolvedValue, propertyName, (BeanWrapperImpl)bw);
                     pv.setConvertedValue(convertedValue);
                 deepCopy.add(pv);
             }
@@ -160,6 +187,7 @@ public abstract  class AbstractAutowireCapableBeanFactory extends  AbstractBeanF
     //初始化Bean,创建出WrapperImpl
     protected  BeanWrapper instantiateBean(String beanName, RootBeanDefinition mbd)
     {
+
         try {
             Object beanInstance;
                 beanInstance = getInstantiationStrategy().instantiate(mbd, beanName);
@@ -178,10 +206,14 @@ public abstract  class AbstractAutowireCapableBeanFactory extends  AbstractBeanF
 
     @Override
     public Object initializeBean(Object bean, String beanName) throws BeansException {
+//        todo
         Object result=bean;
-        invokeAwareMethods(beanName,bean);
         for (BeanPostProcessor beanProcessor : getBeanPostProcessors()) {
             result= beanProcessor.postProcessBeforeInitialization(bean, beanName);
+        }
+        invokeAwareMethods(beanName,bean);
+        for (BeanPostProcessor beanProcessor : getBeanPostProcessors()) {
+            result= beanProcessor.postProcessAfterInitialization(bean, beanName);
         }
         return  result;
     }

@@ -9,8 +9,8 @@ import java.lang.reflect.Method;
 public class MethodBeforeAdviceImpl implements MethodBeforeAdvice {
 
     @Override
-    public void Before(Method method, Object[] args, Object target) throws InvocationTargetException, IllegalAccessException {
+    public void Before(Method method, Object[] args, Object target) {
         System.out.println("i am here");
-        method.invoke(target,args);
+
     }
 }

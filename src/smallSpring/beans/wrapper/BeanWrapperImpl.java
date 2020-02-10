@@ -46,16 +46,23 @@ public class BeanWrapperImpl implements  BeanWrapper  , TypeConverter {
     }
     private Object convert(Object value,Class<?>targetClass)
     {
-        String TextValue;
-        try
+        String TextValue=null;
+        if(value.getClass()!=String.class)
         {
-           TextValue =(String)value;
+            try
+            {
+                TextValue =(String)value;
+            }
+            catch ( Exception e)
+            {
+//                System.out.println(value.getClass());
+                return  value;
+            }
         }
-       catch ( Exception e)
-       {
-           System.out.println(value);
-           return  value;
-       }
+        else
+        {
+            TextValue=value.toString();
+        }
         if (Byte.class == targetClass||targetClass==byte.class) {
             return  Byte.valueOf(TextValue);
         }
@@ -117,6 +124,10 @@ public class BeanWrapperImpl implements  BeanWrapper  , TypeConverter {
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        catch (Exception e)
+        {
             e.printStackTrace();
         }
 
