@@ -5,6 +5,7 @@ import smallSpring.aop.advisor.Advisor;
 import smallSpring.aop.beanfactoryaware.BeanFactoryAware;
 import smallSpring.aop.methodinterceptor.MethodInterceptor;
 import smallSpring.aop.targetsource.CustomClassTargetSource;
+import smallSpring.aop.targetsource.SingletonTargetSource;
 import smallSpring.aop.targetsource.TargetSource;
 import smallSpring.beanpostprocessor.BeanPostProcessor;
 import smallSpring.beanpostprocessor.InstantiationAwareBeanPostProcessor;
@@ -39,6 +40,27 @@ public class AdvisorAutoProxyCreator implements InstantiationAwareBeanPostProces
     @Override
 
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
+        Class<?> beanClass=bean.getClass();
+        if ( Advisor.class.isAssignableFrom(beanClass)) {
+            return bean;
+        }
+        if ( MethodInterceptor.class.isAssignableFrom(beanClass)) {
+            return bean;
+        }
+        if(BeanPostProcessor.class.isAssignableFrom(beanClass))
+        {
+            return  bean;
+        }
+        try {
+            if(beanClass==Class.forName(ProxyCls))
+            {
+                Object proxy= createProxy(new SingletonTargetSource(bean));
+                return proxy;
+            }
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
         return bean;
     }
 
@@ -70,26 +92,6 @@ public class AdvisorAutoProxyCreator implements InstantiationAwareBeanPostProces
 
     @Override
     public Object postProcessBeforeInstantiation(Class<?> beanClass, String beanName) {
-        if ( Advisor.class.isAssignableFrom(beanClass)) {
-            return null;
-        }
-        if ( MethodInterceptor.class.isAssignableFrom(beanClass)) {
-            return null;
-        }
-        if(BeanPostProcessor.class.isAssignableFrom(beanClass))
-        {
-            return  null;
-        }
-        try {
-            if(beanClass==Class.forName(ProxyCls))
-            {
-                Object proxy= createProxy(new CustomClassTargetSource(beanClass));
-                return proxy;
-            }
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-
         return null;
 
     }

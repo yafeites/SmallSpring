@@ -206,16 +206,16 @@ public abstract  class AbstractAutowireCapableBeanFactory extends  AbstractBeanF
 
     @Override
     public Object initializeBean(Object bean, String beanName) throws BeansException {
-//        todo
-        Object result=bean;
+
+//        Object result=bean;
         for (BeanPostProcessor beanProcessor : getBeanPostProcessors()) {
-            result= beanProcessor.postProcessBeforeInitialization(bean, beanName);
+            bean= beanProcessor.postProcessBeforeInitialization(bean, beanName);
         }
         invokeAwareMethods(beanName,bean);
         for (BeanPostProcessor beanProcessor : getBeanPostProcessors()) {
-            result= beanProcessor.postProcessAfterInitialization(bean, beanName);
+            bean= beanProcessor.postProcessAfterInitialization(bean, beanName);
         }
-        return  result;
+        return  bean;
     }
     //如果是特殊Bean设置相关参数
      void invokeAwareMethods(String beanName, Object bean)

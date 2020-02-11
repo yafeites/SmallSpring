@@ -10,7 +10,7 @@ public class MethodBeforeAdviceImpl implements MethodBeforeAdvice {
 
     @Override
     public void Before(Method method, Object[] args, Object target) {
-        System.out.println("i am here");
+        System.out.println("i am the advice for proxy");
 
     }
 }

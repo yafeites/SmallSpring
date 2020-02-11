@@ -7,6 +7,15 @@ public class DefaultPointCutAdvisor implements  PointCutAdvisor {
     private Pointcut pointcut=Pointcut.TRUE;
     private Advice advice;
 
+    @Override
+    public Advice getAdvice() {
+        return advice;
+    }
+
+    public void setAdvice(Advice advice) {
+        this.advice = advice;
+    }
+
     public DefaultPointCutAdvisor(Advice advice) {
         this.advice = advice;
     }
@@ -28,12 +37,5 @@ public class DefaultPointCutAdvisor implements  PointCutAdvisor {
         this.pointcut = pointcut;
     }
 
-    @Override
-    public Advice getAdvice() {
-        return advice;
-    }
 
-    public void setAdvice(Advice advice) {
-        this.advice = advice;
-    }
 }
