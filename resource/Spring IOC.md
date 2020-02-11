@@ -30,9 +30,9 @@
 
 **上下文是Spring的主类，IOC的流程从这里开始**
 
-![image-20200117103033085](C:\Users\yafeites\AppData\Roaming\Typora\typora-user-images\image-20200117103033085.png)
 
 
+![image-20200117103033085](Spring IOC.assets/image-20200117103033085.png)
 
 **FileSystemApplicationContext：我们通过此类产生的对象进入实际的流程中，是最上层的实现类**
 
@@ -40,13 +40,13 @@
 
 
 
-![image-20200117110857925](C:\Users\yafeites\AppData\Roaming\Typora\typora-user-images\image-20200117110857925.png)
+![image-20200117110857925](Spring IOC.assets/image-20200117110857925.png)
 
 **AbstarctRefreshableApplicationContext:实现在refresh()中创建factory和加载factory的对接方法**
 
 
 
-![image-20200117110922837](C:\Users\yafeites\AppData\Roaming\Typora\typora-user-images\image-20200117110922837.png)
+![image-20200117110922837](Spring IOC.assets/image-20200117110922837.png)
 
 **AbstractApplicationContext:实现refresh的具体流程**
 
@@ -54,13 +54,13 @@
 
 
 
-![image-20200117110957198](C:\Users\yafeites\AppData\Roaming\Typora\typora-user-images\image-20200117110957198.png)
+![image-20200117110957198](Spring IOC.assets/image-20200117110957198.png)
 
 #### 2.BeanFactory类
 
 **关于Bean的创建流程从这里开始**
 
-![image-20200117105611104](C:\Users\yafeites\AppData\Roaming\Typora\typora-user-images\image-20200117105611104.png)
+![image-20200117105611104](Spring IOC.assets/image-20200117105611104.png)
 
 
 
@@ -68,7 +68,7 @@
 
 
 
-![image-20200117110518870](C:\Users\yafeites\AppData\Roaming\Typora\typora-user-images\image-20200117110518870.png)
+![image-20200117110518870](Spring IOC.assets/image-20200117110518870.png)
 
 
 
@@ -76,13 +76,13 @@
 
 
 
-![image-20200117110637248](C:\Users\yafeites\AppData\Roaming\Typora\typora-user-images\image-20200117110637248.png)
+![image-20200117110637248](Spring IOC.assets/image-20200117110637248.png)
 
 **AbstractBeanFactory: ** **实现取得BeanDefintion到Bean的创建之间的工作**
 
 
 
-**![image-20200117110345796](C:\Users\yafeites\AppData\Roaming\Typora\typora-user-images\image-20200117110345796.png)**  
+**![image-20200117110345796](Spring IOC.assets/image-20200117110345796.png)**  
 
 
 
@@ -94,7 +94,7 @@
 
 **XML文件配置的Bean信息都保存在这里**
 
-![image-20200117112601098](C:\Users\yafeites\AppData\Roaming\Typora\typora-user-images\image-20200117112601098.png)
+![image-20200117112601098](Spring IOC.assets/image-20200117112601098.png)
 
 
 
@@ -108,7 +108,7 @@
 
 
 
-![image-20200117113426083](C:\Users\yafeites\AppData\Roaming\Typora\typora-user-images\image-20200117113426083.png)
+![image-20200117113426083](Spring IOC.assets/image-20200117113426083.png)
 
 
 
@@ -118,13 +118,18 @@
 
 **首先创建FileSystemApplicationContext**
 
-![image-20200117114632544](C:\Users\yafeites\AppData\Roaming\Typora\typora-user-images\image-20200117114632544.png)
+```JAVa
+public static void main(String[] args) {
+    FileSystemApplicationContext applicationContext=new FileSystemApplicationContext("classpath:application.xml");
+    Boss boss=(Boss)applicationContext.getBean("boss");
+    boss.say();
+
+}
+```
 
 **触发refresh（）方法**
 
 
-
-![image-20200117114723304](C:\Users\yafeites\AppData\Roaming\Typora\typora-user-images\image-20200117114723304.png)
 
 
 
@@ -134,7 +139,16 @@
 
 **增添BeanFactory开始XML的加载**
 
-![image-20200117114734800](C:\Users\yafeites\AppData\Roaming\Typora\typora-user-images\image-20200117114734800.png)
+```java
+public void refresh() throws BeansException {
+//        增添BeanFactory
+        ConfigurableListableBeanFactory beanFactory=obtainFreshBeanFactory();
+//         注册beanProcesssors
+        registerBeanPostProcessors(beanFactory);
+//        结束Factory的构建
+        finishBeanFactoryInitialization(beanFactory);
+    }
+```
 
 
 
@@ -142,29 +156,88 @@
 
 **从loadBeanDefintion进入加载信息并传入BeanFactory中**
 
-![image-20200117115016659](C:\Users\yafeites\AppData\Roaming\Typora\typora-user-images\image-20200117115016659.png)
-
-
+```
+protected void refreshBeanFactory() {
+    DefaultListableBeanFactory beanFactory = createBeanFactory();
+    loadBeanDefinitions(beanFactory);
+    this.beanFactory=beanFactory;
+}
+```
 
 **根据路径location 进入资源加载中**
 
-![image-20200117115154674](C:\Users\yafeites\AppData\Roaming\Typora\typora-user-images\image-20200117115154674.png)
+```
+public int loadBeanDefinitions(String location) {
+  Resource resource=getResourceLoader().getResource(location);
+  int count=loadBeanDefinitions(resource);
+  return count;
+}
+```
 
-**真正的XML信息解析**
 
-![image-20200117120400791](C:\Users\yafeites\AppData\Roaming\Typora\typora-user-images\image-20200117120400791.png)
+
+**真正的XML信息解析在BeanDefinitionDocumentReader**
+
+```
+private void processBeanDefinition(Element ele, BeanDefinitionParserDelegate delegate) {
+    BeanDefinitionHolder bdHolder= delegate.parseBeanDefinitionElement(ele);
+    registerBeanDefinition(bdHolder,beanDefinitionReader.getRegistry());
+}
+```
 
 **流程为先提取Bean的Id，继续解析Bean的属性和子元素**
 
-![image-20200117120611875](C:\Users\yafeites\AppData\Roaming\Typora\typora-user-images\image-20200117120611875.png)
+```
+public BeanDefinitionHolder parseBeanDefinitionElement(Element ele) {
+    String id= ele.getAttribute(ID_ATTRIBUTE);
+    String beanName=id;
 
-![**image-20200117120739998**](C:\Users\yafeites\AppData\Roaming\Typora\typora-user-images\image-20200117120739998.png)
+    try {
+        RootBeanDefinition beanDefiniton=parseBeanDefinitionElement(ele,beanName);
+        return  new BeanDefinitionHolder(beanDefiniton,beanName);
+    } catch (XMLParseException e) {
+        e.getCause();
+    }
+   return null;
+}
+```
+
+```
+private RootBeanDefinition parseBeanDefinitionElement(Element ele, String beanName)throws XMLParseException{
+        if(!ele.hasAttribute(CLASS_ATTRIBUTE))
+        {
+            throw new XMLParseException("not found bean's class");
+        }
+        String className=ele.getAttribute(CLASS_ATTRIBUTE);
+        RootBeanDefinition bd = createBeanDefinition(className);
+//        解析属性
+        parseBeanDefinitionAttributes(ele, beanName,bd);
+//        解析参数元素
+        parsePropertyElements(ele, bd);
+        return bd;
+    }
+```
+
+
 
 
 
 **解析完成后将BeanDefinition交给Holder类承载**
 
-![image-20200117120922308](C:\Users\yafeites\AppData\Roaming\Typora\typora-user-images\image-20200117120922308.png)
+```
+public BeanDefinitionHolder parseBeanDefinitionElement(Element ele) {
+    String id= ele.getAttribute(ID_ATTRIBUTE);
+    String beanName=id;
+
+    try {
+        RootBeanDefinition beanDefiniton=parseBeanDefinitionElement(ele,beanName);
+        return  new BeanDefinitionHolder(beanDefiniton,beanName);
+    } catch (XMLParseException e) {
+        e.getCause();
+    }
+   return null;
+}
+```
 
 
 
@@ -172,7 +245,17 @@
 
 
 
-![image-20200117121030741](C:\Users\yafeites\AppData\Roaming\Typora\typora-user-images\image-20200117121030741.png)
+```
+private void registerBeanDefinition(BeanDefinitionHolder bdHolder, BeanDefinitionRegistry registry) {
+        String beanName = bdHolder.getBeanName();
+        registry.registerBeanDefinition(beanName,bdHolder.getBeanDefinition());
+//        注册BeanDefinition和名称的映射关系
+        Class c=bdHolder.getBeanDefinition().getBeanClass();
+//        注册名称和类别的映射关系map
+        registry.setBeanDefintionByType(beanName,c);
+
+    }
+```
 
 
 
@@ -184,7 +267,17 @@
 
 
 
-![image-20200117121347939](C:\Users\yafeites\AppData\Roaming\Typora\typora-user-images\image-20200117121347939.png)
+```
+public void preInstantiateSingletons() {
+            for(Map.Entry<String,RootBeanDefinition> entry:MergedBeanDefinitions.entrySet())
+            {
+                if(entry.getValue().isSingleton())
+                {
+                    getBean(entry.getKey());
+                }
+            }
+}
+```
 
 
 
@@ -192,7 +285,44 @@
 
 **查看是否已经创建出来，如果没有则从BeanDefinitionmap中取得BeanDefintion创建新的Bean**
 
-![image-20200117121533754](C:\Users\yafeites\AppData\Roaming\Typora\typora-user-images\image-20200117121533754.png)
+```
+ protected  <T> T doGetBean(final String beanName)
+    {
+//        从缓存中获取
+        Object sharedInstance=getSingleton(beanName);
+        Object bean;
+        if(sharedInstance!=null)
+        {
+            bean=getObjectForBeanInstance(sharedInstance, beanName);
+        }
+//        缓存中不存在创建一个全新的Bean
+        else
+        {
+            final RootBeanDefinition mbd = getMergedLocalBeanDefintion(beanName);
+            if (mbd.isSingleton()) {
+                sharedInstance = getSingleton(beanName, new ObjectFactory<Object>() {
+                    @Override
+                    public Object getObject() throws BeansException {
+
+                            return createBean(beanName, mbd);
+
+
+                    }
+                });
+                bean = getObjectForBeanInstance(sharedInstance,beanName);
+            }
+            else if (mbd.isPrototype()) {
+                Object prototypeInstance = null;
+                prototypeInstance = createBean(beanName, mbd);
+                bean = getObjectForBeanInstance(sharedInstance,beanName);
+            }
+            else  bean=null;
+        }
+
+
+            return (T)bean;
+    }
+```
 
 
 
@@ -206,7 +336,34 @@
 
 **4.bean最终初始化**
 
-![image-20200118102105813](C:\Users\yafeites\AppData\Roaming\Typora\typora-user-images\image-20200118102105813.png)
+```
+ protected  Object doCreateBean(String beanName,RootBeanDefinition mbd)
+    {
+
+        BeanWrapper instanceWrapper = null;
+//        创建包装bean的类
+        instanceWrapper = createBeanInstance(beanName, mbd);
+        final Object bean = (instanceWrapper != null ? instanceWrapper.getWrappedInstance() : null);
+//        增添单例Bean构造工厂，用于三层缓存
+        if(mbd.isSingleton())
+        {
+            addSingletonFactory(beanName, new ObjectFactory<Object>() {
+                @Override
+                public Object getObject() throws BeansException {
+                    return bean;
+                }
+            });
+        }
+
+        //给bean添加参数
+    populateBean(beanName, mbd, instanceWrapper);
+
+//    bean最后初始化
+        Object finalObject=initializeBean(bean,beanName);
+
+         return finalObject;
+    }
+```
 
 
 
@@ -216,9 +373,41 @@
 
 #### **1.ByName和ByType的自动配置**
 
-![image-20200118103324630](C:\Users\yafeites\AppData\Roaming\Typora\typora-user-images\image-20200118103324630.png)
+```
+void autowireByName(String beanName, RootBeanDefinition mbd, BeanWrapper bw, MutablePropertyValues newPvs) {
+//        非基本参数并且并未直接设置参数对应的值的抽取
+        String[] propertyNames = unsatisfiedNonSimpleProperties(mbd, bw);
+        for (String propertyName : propertyNames) {
+            if (containsBean(propertyName)&&beanName!=propertyName) {
+                newPvs.add(propertyName, getBean(propertyName));
 
-****
+            }
+            }
+        }
+```
+
+
+
+```
+private void autowireByType(String beanName, RootBeanDefinition mbd, BeanWrapper bw, MutablePropertyValues newPvs) {
+    //        非基本参数并且并未直接设置参数对应的值的抽取
+    String[] propertyNames = unsatisfiedNonSimpleProperties(mbd, bw);
+    for (String propertyName : propertyNames) {
+        PropertyDescriptor pd=bw.getPropertyDescriptor(propertyName);
+        Set<String>TypeSet=getBeanDefintionByType(pd.getPropertyType());
+        for(String name:TypeSet)
+        {
+            if(name!=beanName) {
+                newPvs.add(propertyName, getBean(name));
+                break;
+            }
+        }
+
+    }
+}
+```
+
+
 
 **ByName：实际直接根据PropertyName创建Bean即可**
 
@@ -226,7 +415,17 @@
 
 
 
-![image-20200118103909041](C:\Users\yafeites\AppData\Roaming\Typora\typora-user-images\image-20200118103909041.png)
+```
+ private void registerBeanDefinition(BeanDefinitionHolder bdHolder, BeanDefinitionRegistry registry) {
+        String beanName = bdHolder.getBeanName();
+        registry.registerBeanDefinition(beanName,bdHolder.getBeanDefinition());
+//        注册BeanDefinition和名称的映射关系
+        Class c=bdHolder.getBeanDefinition().getBeanClass();
+//        注册名称和类别的映射关系map
+        registry.setBeanDefintionByType(beanName,c);
+
+    }
+```
 
 #### **2.循环引用问题**
 
@@ -234,7 +433,13 @@
 
 **解决方法：采用三层缓存**
 
-![image-20200118104420774](C:\Users\yafeites\AppData\Roaming\Typora\typora-user-images\image-20200118104420774.png)
+```
+private final Map<String,Object> singletonObjects=new ConcurrentHashMap<>();
+
+private  final Map<String,Object> earlySingletonObjects=new ConcurrentHashMap<>();
+
+private  final Map<String, ObjectFactory<?>>singletonFactories=new HashMap<String, ObjectFactory<?>>(16);
+```
 
 **一层缓存：singletonObjects**
 **二层缓存：erarlySingletonObjects**
@@ -242,17 +447,71 @@
 
 
 
-![image-20200118104905204](C:\Users\yafeites\AppData\Roaming\Typora\typora-user-images\image-20200118104905204.png)
+```
+private Object getSingleton(String beanName, boolean allowEarlyReference) {
+//        首先从一层缓存取值
+        Object singletonObject = this.singletonObjects.get(beanName);
+        if (singletonObject == null && isSingletonCurrentlyInCreation(beanName)) {
+//            如果不存在则从二层缓存取值
+            synchronized (this.singletonObjects) {
+                singletonObject = this.earlySingletonObjects.get(beanName);
+                if (singletonObject == null && allowEarlyReference) {
+//                    如果还是不存在则利用三层缓存的工厂创建Bean
+                    ObjectFactory<?> singletonFactory = this.singletonFactories.get(beanName);
+                    if (singletonFactory != null) {
+                        singletonObject = singletonFactory.getObject();
+                        this.earlySingletonObjects.put(beanName, singletonObject);
+                        this.singletonFactories.remove(beanName);
+                    }
+                }
+            }
+        }
+        return (singletonObject != NULL_OBJECT ? singletonObject : null);
+    }
+```
 
 
 
 **在三层缓存创建完后将未完成的Bean移到二层缓存，而当Bean创建完成后会将二层，三层的Bean删除，留在一层缓存中**
 
-![image-20200118105148685](C:\Users\yafeites\AppData\Roaming\Typora\typora-user-images\image-20200118105148685.png)
+```
+ private   void addSingleton(String beanName, Object singletonObject) {
+        synchronized (this.singletonObjects) {
+            this.singletonObjects.put(beanName, (singletonObject != null ? singletonObject : NULL_OBJECT));
+            this.singletonFactories.remove(beanName);
+            this.earlySingletonObjects.remove(beanName);
+//            this.registeredSingletons.add(beanName);
+        }
+
+    }
+```
 
 **所以我们只要将三层缓存的singleFactory工厂放在Bean的创建过程中即可，但必须保证在Bean的参数注入前，这样才能起作用，实际也是如此**
 
-![image-20200118105337208](C:\Users\yafeites\AppData\Roaming\Typora\typora-user-images\image-20200118105337208.png)
+```
+BeanWrapper instanceWrapper = null;
+//        创建包装bean的类
+        instanceWrapper = createBeanInstance(beanName, mbd);
+        final Object bean = (instanceWrapper != null ? instanceWrapper.getWrappedInstance() : null);
+//        增添单例Bean构造工厂，用于三层缓存
+        if(mbd.isSingleton())
+        {
+            addSingletonFactory(beanName, new ObjectFactory<Object>() {
+                @Override
+                public Object getObject() throws BeansException {
+                    return bean;
+                }
+            });
+        }
+
+        //给bean添加参数
+        populateBean(beanName, mbd, instanceWrapper);
+
+//    bean最后初始化
+        Object finalObject=initializeBean(bean,beanName);
+
+        return finalObject;
+```
 
 
 

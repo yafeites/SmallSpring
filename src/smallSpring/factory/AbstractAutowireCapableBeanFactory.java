@@ -127,12 +127,12 @@ public abstract  class AbstractAutowireCapableBeanFactory extends  AbstractBeanF
         }
 
         //给bean添加参数
-    populateBean(beanName, mbd, instanceWrapper);
+        populateBean(beanName, mbd, instanceWrapper);
 
 //    bean最后初始化
         Object finalObject=initializeBean(bean,beanName);
 
-         return finalObject;
+        return finalObject;
     }
 
     private String[] unsatisfiedNonSimpleProperties(RootBeanDefinition mbd, BeanWrapper bw) {

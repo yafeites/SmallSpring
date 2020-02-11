@@ -10,7 +10,6 @@ import java.nio.file.FileSystem;
 public class FileSystemApplicationContext extends AbstractXmlApplicationContext {
     public static void main(String[] args) {
         FileSystemApplicationContext applicationContext=new FileSystemApplicationContext("classpath:application.xml");
-//        Person p=(Person)applicationContext.getBean("person");
         Boss boss=(Boss)applicationContext.getBean("boss");
         boss.say();
 
