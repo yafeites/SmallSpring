@@ -4,13 +4,12 @@ import smallSpring.aop.Support.ProxyFactory;
 import smallSpring.aop.advisor.Advisor;
 import smallSpring.aop.beanfactoryaware.BeanFactoryAware;
 import smallSpring.aop.methodinterceptor.MethodInterceptor;
-import smallSpring.aop.targetsource.CustomClassTargetSource;
 import smallSpring.aop.targetsource.SingletonTargetSource;
 import smallSpring.aop.targetsource.TargetSource;
-import smallSpring.beanpostprocessor.BeanPostProcessor;
-import smallSpring.beanpostprocessor.InstantiationAwareBeanPostProcessor;
-import smallSpring.exception.BeansException;
-import smallSpring.factory.BeanFactory;
+import smallSpring.ioc.beanpostprocessor.BeanPostProcessor;
+import smallSpring.ioc.beanpostprocessor.InstantiationAwareBeanPostProcessor;
+import smallSpring.ioc.exception.BeansException;
+import smallSpring.ioc.factory.BeanFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +50,7 @@ public class AdvisorAutoProxyCreator implements InstantiationAwareBeanPostProces
         {
             return  bean;
         }
+//        根据指定的代理类生成其代理对象
         try {
             if(beanClass==Class.forName(ProxyCls))
             {
