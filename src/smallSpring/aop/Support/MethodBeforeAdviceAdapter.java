@@ -14,7 +14,6 @@ public class MethodBeforeAdviceAdapter implements  AdvisorAdapter {
     @Override
     public MethodInterceptor getInterceptor(Advisor advisor) {
         MethodBeforeAdvice methodBeforeAdvice=(MethodBeforeAdvice)advisor.getAdvice();
-
         return  new MethodBeforeAdviceInterceptor(methodBeforeAdvice);
     }
 }
