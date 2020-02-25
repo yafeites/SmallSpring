@@ -1,28 +1,5 @@
 #    SpringAOP
 
-## 实现功能：
-
-
-
-**通过在XML文件中配置AdvisorAutoProxyCreator来达到根据Advisor对不同的Bean进行自动配置的功能**
-
-**举例**：**interceptorName是切入的advisor名称，proxyCls是需要进行代理的类名称（**这里按理说都应该设置成list形式，只是IOC中还未支持list标识符，就以单个参数代替了，原理是一样的   ：P）
-
-```
-<beans>
-    <bean id="boss" class="smallSpring.test.Boss"></bean>
-    <bean id="advice" class="smallSpring.aop.advice.Impl.MethodBeforeAdviceImpl"></bean>
-    <bean id="advisor" class="smallSpring.aop.advisor.DefaultPointCutAdvisor">
-        <property name="advice" ref="advice"></property>
-    </bean>
-
-    <bean id="proxyCreator" class="smallSpring.aop.autoproxycreator.AdvisorAutoProxyCreator">
-        <property name="interceptorName" value="advisor"></property>
-        <property name="proxyCls" value="smallSpring.test.Boss"></property>
-    </bean>
-</beans>
-```
-
 ## 原理：
 
 **AOP即面向切面编程，通过CGLIB或者Java动态代理对Bean进行增强来将具体实现的任务分成几个互不相关的层次，举个例子，银行服务器每天都要处理客户的请求工作，像取钱，转账，这是基本任务也就是基础，这个时候如果我们需要去统计银行每种类型的请求的处理次数，如果我们分别对请求代码进行更改会非常麻烦，如果我们通过切面思想就很容易实现这样的需求**
@@ -83,12 +60,6 @@ public interface PointCutAdvisor  extends Advisor{
 ```
 
 **好了，完成上述介绍就可以开始AOP的建设了**
-
-## 
-
-
-
-
 
 ****
 
